@@ -1,5 +1,5 @@
 # AsyncTcpServer
-Запуск сервера
+Starting Server
 ```cs
 public static void Main()
 {
@@ -14,7 +14,7 @@ public static void Main()
 	SRV.Start();
 }
 ```
-Запуск клиента
+Starting Client
 ```cs
 public static void Main()
 {
