@@ -7,7 +7,11 @@ namespace AsyncTcp
 {
     public class AsyncTcpServer : IDisposable
     {
+        /// <inheritdoc/>
         private bool Disposed  = false;
+        /// <summary>
+        /// Причина отключения
+        /// </summary>
         public enum DisconnectReason
         {
             Normal,
@@ -17,6 +21,10 @@ namespace AsyncTcp
             Ping,
             TimeOut
         }
+        #region Events
+        /// <summary>
+        /// Событие запуска сервера
+        /// </summary>
         public class StartedEventArgs : EventArgs
         {
             public string IpPort { get; internal set; }
@@ -28,6 +36,9 @@ namespace AsyncTcp
             if (_onStarted == null) return;
             _onStarted(this, _args);
         }
+        /// <summary>
+        /// Событие остановки сервера
+        /// </summary>
         public class StoppedEventArgs : EventArgs
         {
             public string IpPort { get; internal set; }
@@ -39,6 +50,9 @@ namespace AsyncTcp
             if (_onStopped == null) return;
             _onStopped(this, _args);
         }
+        /// <summary>
+        /// Событие обработка ошибок на сервере
+        /// </summary>
         public class ErrorEventArgs : EventArgs
         {
             public TcpClient Client { get; internal set; }
@@ -52,6 +66,9 @@ namespace AsyncTcp
             if (_onError == null) return;
             _onError(this, _args);
         }
+        /// <summary>
+        /// Событие при подключении клиента к серверу
+        /// </summary>
         public class ConnectionRequestEventArgs : EventArgs
         {
             public string IpPort { get; internal set; }
@@ -64,6 +81,9 @@ namespace AsyncTcp
             if (_ConnectionRequest == null) return;
             _ConnectionRequest(this, _args);
         }
+        /// <summary>
+        /// Событие подключения клиента к серверу
+        /// </summary>
         public class ConnectedEventArgs : EventArgs
         {
             public IPEndPoint IPEndPoint { get; internal set; }
@@ -76,6 +96,9 @@ namespace AsyncTcp
             if (_onConnected == null) return;
             _onConnected(this, _args);
         }
+        /// <summary>
+        /// Событие отключения клиента от сервера
+        /// </summary>
         public class DisconnectedEventArgs : EventArgs
         {
             public string IpPort { get; internal set; }
@@ -89,6 +112,9 @@ namespace AsyncTcp
             if (_onDisconnected == null) return;
             _onDisconnected(this, _args);
         }
+        /// <summary>
+        /// Событие получение данных от клиента
+        /// </summary>
         public class DataReceivedEventArgs : EventArgs
         {
             public TcpClient Client { get; internal set; }
@@ -102,11 +128,17 @@ namespace AsyncTcp
             if (_onDataReceived == null) return;
             _onDataReceived(this, _args);
         }
-
+        #endregion
+        /// <summary>
+        /// Статус
+        /// </summary>
         public bool Listening { get; private set; }
         public string HostPort { get; private set; }
         public IPEndPoint EndPoint { get; private set; }
         public bool NoDelay { get; set; } = true;
+        /// <summary>
+        /// Проверка жизни клиента\сервера
+        /// </summary>
         public bool KeepAlive { get; set; } = false;
         public int KeepAliveTime { get; set; } = 900;
         public int KeepAliveInterval { get; set; } = 300;
@@ -119,9 +151,12 @@ namespace AsyncTcp
         public long BytesReceived { get => _bytesReceived; private set => _bytesReceived = value; }
         private long _bytesSent;
         public long BytesSent { get => _bytesSent; private set => _bytesSent = value; }
+        /// <summary>
+        /// Время ожидания сообщений от клиента если = 0 => ожидание бесконечно, иначе отключения клиента если в течении тайма нет сообщений от клиента
+        /// </summary>
         public int DisconnectTimeOut { get; set; } = 60;
 
-        public class ConnectedClients
+        public class ConnectedClients :IDisposable
         {
             private bool Disposed = false;
             private AsyncTcpServer Server;
