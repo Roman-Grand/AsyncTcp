@@ -489,7 +489,7 @@ namespace AsyncTcp
         /// <inheritdoc/>
         ~AsyncTcpServer() => Dispose(false);
     }
-    public class AsuncTcpClient
+    public class AsyncTcpClient
     {
         public enum DisconnectReason
         {
@@ -606,7 +606,7 @@ namespace AsyncTcp
         private CancellationTokenSource _CancellationTokensource;
         private CancellationToken _Cancellationtoken;
 
-        public AsuncTcpClient(string _Host, int _Port)
+        public AsyncTcpClient(string _Host, int _Port)
         {
             Host = _Host;
             Port = _Port;
