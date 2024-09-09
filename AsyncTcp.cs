@@ -382,12 +382,16 @@ namespace AsyncTcp
         private void AddSentBytes(long _bytesCount) => Interlocked.Add(ref _bytesSent, _bytesCount);
         public void Disconnect(string _IpPort, DisconnectReason _reason = DisconnectReason.Normal)
         {
-            if (!Clients.TryGetValue(_IpPort, out ConnectedClients _value)) return;
-            ConnectedClients _client = _value;
-            _client.StopReceiving();
-            InvokeOnDisconnected(new DisconnectedEventArgs() { IPEndPoint = _client.Client.Client.RemoteEndPoint, IpPort = _IpPort, Reason = _reason });
-            _client.Dispose();
-            Clients.TryRemove(_IpPort, out ConnectedClients _);
+            try
+            {
+                if (!Clients.TryGetValue(_IpPort, out ConnectedClients _value)) return;
+                ConnectedClients _client = _value;
+                _client.StopReceiving();
+                InvokeOnDisconnected(new DisconnectedEventArgs() { IPEndPoint = _client.Client.Client.RemoteEndPoint, IpPort = _IpPort, Reason = _reason });
+                _client.Dispose();
+                Clients.TryRemove(_IpPort, out ConnectedClients _);
+            }
+            catch (Exception) { }
         }
         private async void ListeningTask()
         {
